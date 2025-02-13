@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Create Reminder</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <!-- User Selection (if you want to add users as well) -->
+        <div class="form-group">
+            {{ form.user_id.label }} 
+            {{ form.user_id(class="form-control") }}
+        </div>
+
+        <!-- Device Selection -->
+        <div class="form-group">
+            {{ form.device_id.label }} 
+            {{ form.device_id(class="form-control") }}
+        </div>
+
+        <!-- Task Selection -->
+        <div class="form-group">
+            {{ form.task_id.label }} 
+            {{ form.task_id(class="form-control") }}
+        </div>
+
+        <!-- Reminder Message -->
+        <div class="form-group">
+            {{ form.message.label }} 
+            {{ form.message(class="form-control") }}
+        </div>
+
+        <!-- Reminder Time (Datetime Picker) -->
+        <div class="form-group">
+            {{ form.reminder_time.label }} 
+            {{ form.reminder_time(class="form-control", type="datetime-local") }}
+        </div>
+
+        <!-- Active Status -->
+        <div class="form-group">
+            {{ form.is_active.label }} 
+            {{ form.is_active() }}
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+{% endblock %}

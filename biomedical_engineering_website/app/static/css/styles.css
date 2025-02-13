@@ -1,0 +1,125 @@
+/* General Styles */
+body {
+    background-color: #eaeef1; /* Light gray background */
+    font-family: 'Arial', sans-serif;
+    margin-top: 0;
+}
+
+#base-body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header#header-section {
+    background-color: #4a4e69; /* Soft dark gray */
+    color: white;
+    padding: 10px 0;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.logo-img {
+    height: 90px;
+}
+
+header h1 {
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+.navbar {
+    background-color: #22223b; /* Dark navy blue */
+    padding: 0.5rem 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: white;
+}
+
+.navbar-nav .nav-item .nav-link {
+    color: #f2e9e4; /* Off-white */
+    font-size: 0.9rem;
+    padding: 1px 10px;
+    text-transform: uppercase;
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+    background-color: #4a4e69; /* Match header color for hover */
+    border-radius: 4px;
+}
+
+.navbar-toggler {
+    border-color: #ffffff;
+}
+
+.navbar-toggler-icon {
+    background-color: white;
+}
+
+.form-inline .input-group {
+    width: 200px;
+}
+
+.form-control.form-control-sm {
+    border-radius: 30px;
+    height: 35px;
+}
+
+.btn-outline-light {
+    border-radius: 30px;
+    height: 35px;
+}
+
+/* Main Content Styling */
+#content-container {
+    flex-grow: 1;
+    padding: 30px;
+}
+
+/* Footer Section */
+footer#footer-section {
+    background-color: #22223b; /* Match navbar color */
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Small Logo for Navbar */
+.logo-img-small {
+    height: 50px;
+}
+
+/* Welcome Message Styling */
+.welcome-message {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #f2e9e4; /* Off-white */
+    text-transform: capitalize;
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.75rem;
+    }
+
+    .logo-img {
+        height: 70px;
+    }
+
+    .navbar-nav .nav-item .nav-link {
+        padding: 10px 8px;
+    }
+
+    .navbar-text {
+        font-size: 0.9rem;
+    }
+
+    .logo-img-small {
+        height: 40px;
+    }
+}

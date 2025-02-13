@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="text-center mb-4">All Notifications</h2>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            {% if notifications %}
+                <ul class="list-group list-group-flush">
+                    {% for notification in notifications %}
+                        <li class="list-group-item {% if not notification.is_read %} list-group-item-warning {% endif %}">
+                            <strong>{{ notification.type }}</strong>: 
+                            <a href="{{ url_for('main.mark_notification_read', notification_id=notification.id) }}">
+                                {{ notification.message }}
+                            </a>
+                            <small class="text-muted d-block">
+                                {{ notification.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+                            </small>
+                            {% if not notification.is_read %}
+                                <span class="badge bg-info float-end">New</span>
+                            {% else %}
+                                <span class="badge bg-success float-end">Read</span>
+                            {% endif %}
+                            
+                            <!-- Remove button -->
+                            <form method="POST" action="{{ url_for('main.remove_notification', notification_id=notification.id) }}" class="d-inline float-end ms-2">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">No notifications to display.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Clear Read Notifications Button -->
+    <div class="mt-3 text-center">
+        <form method="POST" action="{{ url_for('main.clear_read_notifications') }}" class="d-inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-sm btn-warning">Clear All Read Notifications</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

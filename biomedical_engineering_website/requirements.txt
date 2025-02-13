@@ -1,0 +1,8 @@
+# Requirements 
+Flask==2.2.3
+Flask-WTF==1.0.1
+Flask-SQLAlchemy==2.5.1
+Flask-Login==0.6.1
+WTForms==3.0.1
+Werkzeug==2.2.3
+SQLAlchemy==1.4.39

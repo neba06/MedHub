@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+
+    <!-- Page Header -->
+    <header class="mb-5">
+        <h1 class="text-center text-dark">Device Management</h1>
+    </header>
+     <!-- Add Device Button for Engineers -->
+    {% if current_user.role == 'engineer' %}
+    <div class="text-end mb-4">
+        <a href="{{ url_for('main.add_device') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Device
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Search Bar -->
+    <form method="GET" action="{{ url_for('main.devices') }}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search by Name, Model, or Serial Number" 
+                   value="{{ request.args.get('search', '') }}">
+            <div class="input-group-append">
+                <button class="btn btn-dark" type="submit">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Filter Bar -->
+    <form method="GET" action="{{ url_for('main.devices') }}" class="mb-5 bg-light p-3 rounded shadow-sm">
+        <div class="row align-items-center">
+            <div class="col-md-3">
+                <label for="status" class="form-label">Status</label>
+                <select name="status" id="status" class="form-control">
+                    <option value="">All Status</option>
+                    <option value="Active" {% if request.args.get('status') == 'Active' %}selected{% endif %}>Active</option>
+                    <option value="Inactive" {% if request.args.get('status') == 'Inactive' %}selected{% endif %}>Inactive</option>
+                    <option value="Under Maintenance" {% if request.args.get('status') == 'Under Maintenance' %}selected{% endif %}>
+                        Under Maintenance
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="location" class="form-label">Location</label>
+                <input type="text" name="location" id="location" class="form-control" placeholder="Enter Location" 
+                       value="{{ request.args.get('location', '') }}">
+            </div>
+            <div class="col-md-3">
+                <label for="health_status" class="form-label">Health Status</label>
+                <select name="health_status" id="health_status" class="form-control">
+                    <option value="">All Health Status</option>
+                    <option value="Good" {% if request.args.get('health_status') == 'Good' %}selected{% endif %}>Good</option>
+                    <option value="Fair" {% if request.args.get('health_status') == 'Fair' %}selected{% endif %}>
+                        Fair
+                    </option>
+                    <option value="Critical" {% if request.args.get('health_status') == 'Critical' %}selected{% endif %}>Critical</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="manufacturer" class="form-label">Manufacturer</label>
+                <input type="text" name="manufacturer" id="manufacturer" class="form-control" placeholder="Enter Manufacturer" 
+                       value="{{ request.args.get('manufacturer', '') }}">
+            </div>
+        </div>
+        <div class="text-end mt-3">
+            <button type="submit" class="btn btn-secondary">
+                <i class="fas fa-filter"></i> Apply Filters
+            </button>
+        </div>
+    </form>
+
+    <!-- Role-Specific Device Sections -->
+    {% if current_user.role == 'engineer' %}
+        <section>
+            <h2 class="text-secondary">Your Assigned Devices</h2>
+            <div class="row">
+                {% for device in your_devices %}
+                    <div class="col-md-4 mb-4">
+                        {% include 'partials/device_card.html' %}
+                    </div>
+                {% endfor %}
+                {% if your_devices|length == 0 %}
+                    <p class="text-muted">No devices assigned to you.</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-secondary mt-5">All Devices</h2>
+            <div class="row">
+                {% for device in devices %}
+                    <div class="col-md-4 mb-4">
+                        {% include 'partials/device_card.html' %}
+                    </div>
+                {% endfor %}
+                {% if devices|length == 0 %}
+                    <p class="text-muted">No devices found.</p>
+                {% endif %}
+            </div>
+        </section>
+
+    {% elif current_user.role == 'technician' %}
+        <section>
+            <h2 class="text-secondary">Your Assigned Devices</h2>
+            <div class="row">
+                {% for device in devices %}
+                    <div class="col-md-4 mb-4">
+                        {% include 'partials/device_card.html' %}
+                    </div>
+                {% endfor %}
+                {% if devices|length == 0 %}
+                    <p class="text-muted">No devices assigned to you.</p>
+                {% endif %}
+            </div>
+        </section>
+
+    {% else %}
+        <section>
+            <h2 class="text-secondary">Unassigned Devices</h2>
+            <div class="row">
+                {% for device in unassigned_devices %}
+                    <div class="col-md-4 mb-4">
+                        {% include 'partials/device_card.html' %}
+                    </div>
+                {% endfor %}
+                {% if devices|length == 0 %}
+                    <p class="text-muted">No devices assigned to you.</p>
+                {% endif %}
+            </div>
+        </section>
+        <section>
+            <h2 class="text-secondary">All Devices</h2>
+            <div class="row">
+                {% for device in devices %}
+                    <div class="col-md-4 mb-4">
+                        {% include 'partials/device_card.html' %}
+                    </div>
+                {% endfor %}
+                {% if devices|length == 0 %}
+                    <p class="text-muted">No devices found.</p>
+                {% endif %}
+            </div>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}

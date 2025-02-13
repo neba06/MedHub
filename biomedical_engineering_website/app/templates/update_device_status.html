@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+    <h2>Update Device Status</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" id="status" class="form-select">
+                <option value="Active" {% if device.status == "Active" %}selected{% endif %}>Active</option>
+                <option value="Inactive" {% if device.status == "Inactive" %}selected{% endif %}>Inactive</option>
+                <option value="Decommissioned" {% if device.status == "Decommissioned" %}selected{% endif %}>Decommissioned</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="health_status" class="form-label">Health Status</label>
+            <select name="health_status" id="health_status" class="form-select">
+                <option value="Good" {% if device.health_status == "Good" %}selected{% endif %}>Good</option>
+                <option value="Fair" {% if device.health_status == "Fair" %}selected{% endif %}>Fair</option>
+                <option value="Critical" {% if device.health_status == "Critical" %}selected{% endif %}>Critical</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Status</button>
+    </form>
+</div>
+{% endblock %}

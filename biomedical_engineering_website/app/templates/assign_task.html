@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">Assign Task</h1>
+
+    <form method="POST" class="shadow-sm p-4 bg-light rounded">
+        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+
+        <div class="form-group mb-3">
+            <label for="task_id" class="form-label">Task</label>
+            <select class="form-control" id="task_id" name="task_id" required>
+                <option value="" disabled selected>Select a Task</option>
+                {% for task in tasks %}
+                    <option value="{{ task.id }}">{{ task.title }} ({{ task.status }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label for="assigned_to" class="form-label">Assign To</label>
+            <select class="form-control" id="assigned_to" name="assigned_to" required>
+                <option value="" disabled selected>Select a Technician or Engineer</option>
+                {% for user in available_users %}
+                    <option value="{{ user.id }}">{{ user.username }} ({{ user.role }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Assign Task</button>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mt-4">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">
+        {% if user.id == current_user.id %} Your {% else %} {{ user.username }} {% endif %}'s Details
+    </h1>
+
+    <div>
+        <p><strong>Role:</strong> {{ user.role }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Joined:</strong> {{ user.joined_at.strftime('%B %d, %Y') }}</p>
+    </div>
+
+    {% if user.role != 'admin' %}
+    <h3 class="mt-4">Assign Device</h3>
+    <form method="POST">
+        <!-- Inline CSRF token -->
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-group">
+            <label for="device_id">Device</label>
+            <select class="form-control" id="device_id" name="device_id" required>
+                <option value="" disabled selected>Select a Device</option>
+                {% for device in devices %}
+                    <option value="{{ device.id }}">{{ device.name }} ({{ device.serial_number }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Assign Device</button>
+        </div>
+    </form>
+
+    <h3 class="mt-4">Assign Task</h3>
+    <form method="POST">
+        <!-- Inline CSRF token -->
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-group">
+            <label for="task_id">Task</label>
+            <select class="form-control" id="task_id" name="task_id" required>
+                <option value="" disabled selected>Select a Task</option>
+                {% for task in tasks %}
+                    <option value="{{ task.id }}">{{ task.title }} ({{ task.status }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-info">Assign Task</button>
+        </div>
+    </form>
+
+    <h3 class="mt-4">Assign Incident</h3>
+    <form method="POST">
+        <!-- Inline CSRF token -->
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-group">
+            <label for="incident_id">Incident</label>
+            <select class="form-control" id="incident_id" name="incident_id" required>
+                <option value="" disabled selected>Select an Incident</option>
+                {% for incident in incidents %}
+                    <option value="{{ incident.id }}">{{ incident.description }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-warning">Assign Incident</button>
+        </div>
+    </form>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    {% if current_user.role == 'admin' %}
+    <div class="mt-4">
+        
+        {% if user.id != current_user.id %}
+        <form action="{{ url_for('main.delete_user', user_id=user.id) }}" method="POST" style="display:inline;">
+    <!-- Inline CSRF token -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+</form>
+
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <a href="{{ url_for('main.view_all_users') }}" class="btn btn-secondary mt-3">Back to View All Users</a>
+</div>
+{% endblock %}

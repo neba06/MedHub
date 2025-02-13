@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">View All Users</h1>
+
+    <table class="table table-striped table-hover shadow-sm">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('main.view_user_details', user_id=user.id) }}" class="font-weight-bold text-primary">
+                            {% if user.id == current_user.id %} You {% else %} {{ user.username }} {% endif %}
+                        </a>
+                    </td>
+                    <td>{{ user.role }}</td>
+                    <td>
+                        <a href="{{ url_for('main.view_user_details', user_id=user.id) }}" class="btn btn-info btn-sm">View</a>
+                        {% if user.id != current_user.id %}
+                        <form action="{{ url_for('main.delete_user', user_id=user.id) }}" method="POST" style="display:inline;">
+    <!-- Inline CSRF token -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+</form>
+
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('main.manage_users') }}" class="btn btn-secondary mt-3">Back to Manage Users</a>
+</div>
+{% endblock %}

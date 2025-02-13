@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Maintenance for {{ device.name }}</h1>
+
+    <!-- Maintenance History Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">Maintenance History</h3>
+        </div>
+        <div class="card-body">
+            {% if device.maintenances %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in device.maintenances %}
+                                <tr>
+                                    <td>{{ record.maintenance_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                    <td>{{ record.maintenance_type }}</td>
+                                    <td>{{ record.details }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">No maintenance records found for this device.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Add Maintenance Record Section -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Add New Maintenance Record</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.maintenance_type.label(class="form-label") }}
+                    {{ form.maintenance_type(class="form-control", id="maintenance-type", placeholder="Select maintenance type") }}
+                </div>
+                <div class="form-group" id="custom-type-container" style="display: none;">
+                    {{ form.custom_maintenance_type.label(class="form-label") }}
+                    {{ form.custom_maintenance_type(class="form-control", placeholder="Enter custom type") }}
+                </div>
+                <div class="form-group">
+                    {{ form.details.label(class="form-label") }}
+                    {{ form.details(class="form-control", placeholder="Enter maintenance details") }}
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <span class="spinner-border spinner-border-sm d-none" id="loading-spinner"></span>
+                    Add Maintenance
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Toggle custom maintenance type input
+    document.getElementById('maintenance-type').addEventListener('change', function() {
+        const customTypeContainer = document.getElementById('custom-type-container');
+        if (this.value === 'Other') {
+            customTypeContainer.style.display = 'block';
+        } else {
+            customTypeContainer.style.display = 'none';
+        }
+    });
+
+    // Show spinner on form submission
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function() {
+        document.getElementById('loading-spinner').classList.remove('d-none');
+    });
+</script>
+{% endblock %}

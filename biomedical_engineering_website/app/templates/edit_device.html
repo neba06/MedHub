@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Edit Device</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.name.label }}
+            {{ form.name(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.model_number.label }}
+            {{ form.model_number(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.serial_number.label }}
+            {{ form.serial_number(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.manufacturer.label }}
+            {{ form.manufacturer(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.purchase_date.label }}
+            {{ form.purchase_date(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.warranty_expiry_date.label }}
+            {{ form.warranty_expiry_date(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label>Maintenance Schedule</label><br>
+            {{ form.maintenance_schedule_daily() }} Daily
+            {{ form.maintenance_schedule_weekly() }} Weekly
+            {{ form.maintenance_schedule_monthly() }} Monthly
+            {{ form.maintenance_schedule_quarterly() }} Quarterly
+            {{ form.maintenance_schedule_yearly() }} Yearly
+        </div>
+
+        <div class="form-group">
+            {{ form.maintenance_interval.label }}
+            {{ form.maintenance_interval(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.location.label }}
+            {{ form.location(class="form-control") }}
+        </div>
+
+        <button type="submit" class="btn btn-warning">{{ form.submit.label }}</button>
+    </form>
+{% endblock %}

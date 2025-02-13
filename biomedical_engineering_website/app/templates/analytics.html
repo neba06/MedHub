@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/analytics_styles.css') }}">
+<h1 class="text-center my-5">Website Analytics</h1>
+<div id="analytics-page" class="container">
+    <div class="row">
+        <!-- Total Devices Card -->
+        <div class="col-md-2">
+            <div class="card text-center shadow-sm mb-4">
+                <div class="card-body bg-primary text-white rounded">
+                    <h5 class="card-title mb-3">Total Devices</h5>
+                    <p class="card-text display-4">{{ total_devices }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Tasks Card -->
+        <div class="col-md-2">
+            <div class="card text-center shadow-sm mb-4">
+                <div class="card-body bg-success text-white rounded">
+                    <h5 class="card-title mb-3">Total Tasks</h5>
+                    <p class="card-text display-4">{{ total_tasks }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Incidents Card -->
+        <div class="col-md-2">
+            <div class="card text-center shadow-sm mb-4">
+                <div class="card-body bg-danger text-white rounded">
+                    <h5 class="card-title mb-3">Total Incidents</h5>
+                    <p class="card-text display-4">{{ total_incidents }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Users Card -->
+        <div class="col-md-2">
+            <div class="card text-center shadow-sm mb-4">
+                <div class="card-body bg-info text-white rounded">
+                    <h5 class="card-title mb-3">Total Users</h5>
+                    <p class="card-text display-4">{{ total_users }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Maintenance Card -->
+        <div class="col-md-2">
+            <div class="card text-center shadow-sm mb-4">
+                <div class="card-body bg-warning text-white rounded">
+                    <h5 class="card-title mb-3">Total Maintenance</h5>
+                    <p class="card-text display-4">{{ total_maintenance_tasks }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="card text-center shadow-sm mb-4">
+                <div class="card-body bg-secondary text-white rounded">
+                    <h5 class="card-title mb-3">Total Stocks</h5>
+                    <p class="card-text display-4">{{ total_stock_items }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overall Statistics -->
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Total Statistics</h3>
+            <canvas id="overallStatsChart" style="max-width: 500px; max-height: 300px;"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>Incident Status Overview</h3>
+            <canvas id="incidentStatusChart" style="max-width: 500px; max-height: 300px;"></canvas>
+        </div>
+    </div>
+
+    <!-- Device Health Status Chart -->
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3">
+            <h3 class="text-center">Device Health Status</h3>
+            <canvas id="deviceHealthChart" style="max-width: 500px; max-height: 300px;"></canvas>
+        </div>
+    </div>
+
+    <!-- Task Priority Distribution -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h3>Task Priority Distribution</h3>
+            <canvas id="taskPriorityChart" style="max-width: 500px; max-height: 300px;"></canvas>
+        </div>
+    </div>
+
+    <!-- New Analytics -->
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h3>User Roles</h3>
+            <canvas id="userRolesChart" style="max-width: 500px; max-height: 300px;"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>Task Assignment Status</h3>
+            <canvas id="taskAssignmentChart" style="max-width: 500px; max-height: 300px;"></canvas>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h3>Incident Assignment Status</h3>
+            <canvas id="incidentAssignmentChart" style="max-width: 500px; max-height: 300px;"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>Device Assignment Status</h3>
+            <canvas id="deviceAssignmentChart" style="max-width: 500px; max-height: 300px;"></canvas>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h3>Device Maintenance Schedule</h3>
+            <canvas id="maintenanceScheduleChart" style="max-width: 500px; max-height: 300px;"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>Most Active Users</h3>
+            <canvas id="mostActiveUsersChart" style="max-width: 500px; max-height: 300px;"></canvas>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h3>Website Activity Trends</h3>
+            <canvas id="websiteActivityChart" style="max-width: 500px; max-height: 300px;"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Overall Statistics Chart -->
+<script>
+    var ctx1 = document.getElementById('overallStatsChart').getContext('2d');
+    var overallStatsChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: ['Devices', 'Incidents', 'Tasks', 'Users'],
+            datasets: [{
+                label: 'Count',
+                data: [{{ total_devices }}, {{ total_incidents }}, {{ total_tasks }}, {{ total_users }}],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.6)', 
+                    'rgba(255, 99, 132, 0.6)', 
+                    'rgba(75, 192, 192, 0.6)', 
+                    'rgba(255, 205, 86, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)', 
+                    'rgba(255, 99, 132, 1)', 
+                    'rgba(75, 192, 192, 1)', 
+                    'rgba(255, 205, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Incident Status Chart -->
+<script>
+    var ctx2 = document.getElementById('incidentStatusChart').getContext('2d');
+    var incidentStatusChart = new Chart(ctx2, {
+        type: 'pie',
+        data: {
+            labels: ['Open', 'Resolved'],
+            datasets: [{
+                data: [{{ open_incidents_percentage }}, {{ resolved_incidents_percentage }}],
+                backgroundColor: [
+                    'rgba(220, 53, 69, 0.6)', 
+                    'rgba(40, 167, 69, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(220, 53, 69, 1)', 
+                    'rgba(40, 167, 69, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Device Health Status Chart -->
+<script>
+    var ctx3 = document.getElementById('deviceHealthChart').getContext('2d');
+    var deviceHealthChart = new Chart(ctx3, {
+        type: 'doughnut',
+        data: {
+            labels: ['Healthy', 'Fair', 'Critical'],
+            datasets: [{
+                data: [{{ healthy_devices_percentage }}, {{ fair_devices_percentage }}, {{ critical_devices_percentage }}],
+                backgroundColor: [
+                    'rgba(40, 167, 69, 0.6)', 
+                    'rgba(255, 193, 7, 0.6)', 
+                    'rgba(220, 53, 69, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(40, 167, 69, 1)', 
+                    'rgba(255, 193, 7, 1)', 
+                    'rgba(220, 53, 69, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Task Priority Distribution Chart -->
+<script>
+    var ctx4 = document.getElementById('taskPriorityChart').getContext('2d');
+    var taskPriorityChart = new Chart(ctx4, {
+        type: 'bar',
+        data: {
+            labels: ['Critical', 'High', 'Medium', 'Low'],
+            datasets: [{
+                label: 'Tasks',
+                data: [{{ critical_tasks }}, {{ high_tasks }}, {{ medium_tasks }}, {{ low_tasks }}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)', 
+                    'rgba(255, 159, 64, 0.6)', 
+                    'rgba(54, 162, 235, 0.6)', 
+                    'rgba(153, 102, 255, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)', 
+                    'rgba(255, 159, 64, 1)', 
+                    'rgba(54, 162, 235, 1)', 
+                    'rgba(153, 102, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            scales: {
+                x: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<!-- User Roles Chart -->
+<script>
+    var ctxUserRoles = document.getElementById('userRolesChart').getContext('2d');
+    var userRolesChart = new Chart(ctxUserRoles, {
+        type: 'pie',
+        data: {
+            labels: ['Engineers', 'Technicians', 'Admins'],
+            datasets: [{
+                data: [{{ engineers }}, {{ technicians }}, {{ total_users - engineers - technicians }}],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.6)', 
+                    'rgba(40, 167, 69, 0.6)', 
+                    'rgba(255, 159, 64, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)', 
+                    'rgba(40, 167, 69, 1)', 
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+</script>
+
+<!-- Task Assignment Status Chart -->
+<script>
+    var ctxTaskAssignment = document.getElementById('taskAssignmentChart').getContext('2d');
+    var taskAssignmentChart = new Chart(ctxTaskAssignment, {
+        type: 'bar',
+        data: {
+            labels: ['Assigned', 'Unassigned'],
+            datasets: [{
+                label: 'Tasks',
+                data: [{{ assigned_tasks }}, {{ unassigned_tasks }}],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.6)', 
+                    'rgba(255, 99, 132, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)', 
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Incident Assignment Status Chart -->
+<script>
+    var ctxIncidentAssignment = document.getElementById('incidentAssignmentChart').getContext('2d');
+    var incidentAssignmentChart = new Chart(ctxIncidentAssignment, {
+        type: 'bar',
+        data: {
+            labels: ['Assigned', 'Unassigned'],
+            datasets: [{
+                label: 'Incidents',
+                data: [{{ assigned_incidents }}, {{ unassigned_incidents }}],
+                backgroundColor: [
+                    'rgba(153, 102, 255, 0.6)', 
+                    'rgba(255, 159, 64, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(153, 102, 255, 1)', 
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Device Assignment Status Chart -->
+<script>
+    var ctxDeviceAssignment = document.getElementById('deviceAssignmentChart').getContext('2d');
+    var deviceAssignmentChart = new Chart(ctxDeviceAssignment, {
+        type: 'bar',
+        data: {
+            labels: ['Assigned', 'Unassigned'],
+            datasets: [{
+                label: 'Devices',
+                data: [{{ assigned_devices }}, {{ unassigned_devices }}],
+                backgroundColor: [
+                    'rgba(40, 167, 69, 0.6)', 
+                    'rgba(220, 53, 69, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(40, 167, 69, 1)', 
+                    'rgba(220, 53, 69, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Device Maintenance Schedule Chart -->
+<script>
+    var ctxMaintenanceSchedule = document.getElementById('maintenanceScheduleChart').getContext('2d');
+    var maintenanceScheduleChart = new Chart(ctxMaintenanceSchedule, {
+        type: 'line',
+        data: {
+            labels: ['Daily', 'Weekly', 'Monthly', 'Quarterly', 'Yearly'],
+            datasets: [{
+                label: 'Scheduled Maintenance',
+                data: [{{ daily_maintenance }}, {{ weekly_maintenance }}, {{ monthly_maintenance }}, {{ quarterly_maintenance }}, {{ yearly_maintenance }}],
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Most Active Users Chart -->
+<script>
+    // Most Active Users Chart (Bar Chart)
+    var ctxMostActiveUsers = document.getElementById('mostActiveUsersChart').getContext('2d');
+    var mostActiveUsersChart = new Chart(ctxMostActiveUsers, {
+        type: 'bar',
+        data: {
+            labels: {{ most_active_user_names|tojson }},
+            datasets: [{
+                label: 'Activity Count',
+                data: {{ most_active_user_counts|tojson }},
+                backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Website Activity Trends Chart (Line Chart)
+    var ctxWebsiteActivity = document.getElementById('websiteActivityChart').getContext('2d');
+    var websiteActivityChart = new Chart(ctxWebsiteActivity, {
+        type: 'line',
+        data: {
+            labels: {{ website_activity_dates|tojson }},
+            datasets: [{
+                label: 'Website Visits',
+                data: {{ website_activity_counts|tojson }},
+                backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+
+
+{% endblock %}

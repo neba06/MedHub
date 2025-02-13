@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script>
+    document.querySelector('form').addEventListener('submit', function () {
+        const submitButton = document.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...';
+    });
+</script>
+
+<div class="container my-5">
+    <h1 class="text-center mb-4">Add New Device</h1>
+    <form method="POST" class="shadow p-4 rounded bg-light">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.name.label }}
+            {{ form.name(class="form-control", placeholder="Enter device name") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.model_number.label }}
+            {{ form.model_number(class="form-control", placeholder="Enter model number") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.serial_number.label }}
+            {{ form.serial_number(class="form-control", placeholder="Enter serial number") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.manufacturer.label }}
+            {{ form.manufacturer(class="form-control", placeholder="Enter manufacturer name") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.purchase_date.label }}
+            {{ form.purchase_date(class="form-control", placeholder="YYYY-MM-DD") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.warranty_expiry_date.label }}
+            {{ form.warranty_expiry_date(class="form-control", placeholder="YYYY-MM-DD") }}
+        </div>
+
+        <div class="form-group">
+            <label>Maintenance Schedule</label><br>
+            {{ form.maintenance_schedule_daily() }} {{ form.maintenance_schedule_daily.label }}
+            {{ form.maintenance_schedule_weekly() }} {{ form.maintenance_schedule_weekly.label }}
+            {{ form.maintenance_schedule_monthly() }} {{ form.maintenance_schedule_monthly.label }}
+            {{ form.maintenance_schedule_quarterly() }} {{ form.maintenance_schedule_quarterly.label }}
+            {{ form.maintenance_schedule_yearly() }} {{ form.maintenance_schedule_yearly.label }}
+        </div>
+
+        <div class="form-group">
+            {{ form.maintenance_interval.label }}
+            {{ form.maintenance_interval(class="form-control", placeholder="Enter maintenance interval in days") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.status.label }}
+            {{ form.status(class="form-control") }}
+        </div>
+
+
+        <div class="form-group">
+            {{ form.location.label }}
+            {{ form.location(class="form-control", placeholder="Enter device location") }}
+        </div>
+
+        <div class="form-group">
+            {{ form.health_status.label }}
+            {{ form.health_status(class="form-control") }}
+        </div>
+        
+        <button type="submit" class="btn btn-success mt-3">{{ form.submit.label }}</button>
+    </form>
+</div>
+{% endblock %}

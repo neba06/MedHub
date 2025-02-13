@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <h1 class="h4">Engineer Dashboard</h1>
+        <p class="mb-0">Welcome, {{ current_user.username }}!</p>
+    </div>
+</header>
+
+<main class="py-5">
+    <div class="row text-center">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white mb-3 shadow-sm">
+                <div class="card-header">
+                    <h4>Assigned Devices</h4>
+                </div>
+                <div class="card-body">
+                    <p class="display-5">{{ assigned_devices|length }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white mb-3 shadow-sm">
+                <div class="card-header">
+                    <h4>Assigned Tasks</h4>
+                </div>
+                <div class="card-body">
+                    <p class="display-5">{{ assigned_tasks|length }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white mb-3 shadow-sm">
+                <div class="card-header">
+                    <h4>Assigned Incidents</h4>
+                </div>
+                <div class="card-body">
+                    <p class="display-5">{{ assigned_incidents|length }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark mb-3 shadow-sm">
+                <div class="card-header">
+                    <h4>Active Reminders</h4>
+                </div>
+                <div class="card-body">
+                    <p class="display-5">{{ active_reminders|length }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+        </section>
+
+        
+
+        <!-- Recent Notifications -->
+    <h3 class="mt-5">Recent Notifications</h3>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Message</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for notification in recent_notifications %}
+            <tr>
+                <td>{{ notification.type }}</td>
+                <td>{{ notification.message }}</td>
+                <td>{{ notification.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3" class="text-center">No recent notifications.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Assigned Devices -->
+    <h3 class="mt-5">Your Assigned Devices</h3>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Device Name</th>
+                <th>Model</th>
+                <th>Status</th>
+                <th>Next Maintenance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for device in assigned_devices %}
+            <tr>
+                <td>{{ device.name }}</td>
+                <td>{{ device.model_number }}</td>
+                <td>{{ device.status }}</td>
+                <td>{{ device.next_maintenance_date.strftime('%Y-%m-%d') if device.next_maintenance_date else 'N/A' }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center">No devices assigned to you.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Assigned Tasks -->
+    <h3 class="mt-5">Your Assigned Tasks</h3>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Task Title</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Due Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in assigned_tasks %}
+            <tr>
+                <td>{{ task.title }}</td>
+                <td>{{ task.priority }}</td>
+                <td>{{ task.status }}</td>
+                <td>{{ task.due_date.strftime('%Y-%m-%d') if task.due_date else 'N/A' }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center">No tasks assigned to you.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Assigned Incidents -->
+    <h3 class="mt-5">Your Assigned Incidents</h3>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Device Name</th>
+                <th>Reported On</th>
+                <th>Status</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for incident in assigned_incidents %}
+            <tr>
+                <td>{{ incident.device.name }}</td>
+                <td>{{ incident.report_date.strftime('%Y-%m-%d') }}</td>
+                <td>{{ incident.resolution_status }}</td>
+                <td>{{ incident.description[:50] }}...</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center">No incidents assigned to you.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    
+    
+        <section class="mb-5">
+            <h2 class="h5 mb-3">Health Status of Assigned Devices</h2>
+            <div class="row">
+                {% for device in assigned_devices %}
+                <div class="col-md-4 mb-3">
+                    <div class="card shadow">
+                        <div class="card-header {% if device.health_status == 'Critical' %}bg-danger{% elif device.health_status == 'Warning' %}bg-warning{% else %}bg-success{% endif %} text-white">
+                            <h5 class="mb-0">{{ device.name }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Status:</strong> {{ device.health_status }}</p>
+                            <p><strong>Last Maintenance:</strong> {{ device.last_maintenance_date.strftime('%Y-%m-%d') }}</p>
+                            <p><strong>Next Maintenance:</strong> {{ device.next_maintenance_date.strftime('%Y-%m-%d') if device.next_maintenance_date else 'N/A'}}</p>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-center">No assigned devices with health status information available.</p>
+                {% endfor %}
+            </div>
+        </section>
+        <section class="mb-5">
+    <h2 class="h5 mb-3">Devices You Added</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Device Name</th>
+                    <th>Model</th>
+                    <th>Status</th>
+                    <th>Added On</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for device in devices_added_by_user %}
+                <tr>
+                    <td>{{ device.name }}</td>
+                    <td>{{ device.model_number }}</td>
+                    <td>{{ device.status }}</td>
+                    <td>{{ device.added_date.strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">You have not added any devices.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="mb-5">
+    <h2 class="h5 mb-3">Incidents You Reported</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Incident ID</th>
+                    <th>Device Name</th>
+                    <th>Reported On</th>
+                    <th>Status</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for incident in incidents_reported_by_user %}
+                <tr>
+                    <td>{{ incident.id }}</td>
+                    <td>{{ incident.device.name }}</td>
+                    <td>{{ incident.report_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ incident.resolution_status }}</td>
+                    <td>{{ incident.description[:50] }}...</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">You have not reported any incidents.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+
+
+        <section class="mb-5">
+            <h2 class="h5 mb-3">Recent Activity Logs</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in recent_activity_logs %}
+                        <tr>
+                            <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            <td>{{ log.action }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="2" class="text-center">No recent activities found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

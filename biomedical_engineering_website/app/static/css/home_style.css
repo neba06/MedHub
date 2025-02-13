@@ -1,0 +1,91 @@
+/* Home Page Styles */
+.hero {
+    background-color: #4a4e69; /* Soft dark gray matching header */
+    color: white;
+    padding: 60px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+}
+.card {
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.card-text {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.overview h2, .personalized-info h2 {
+    color: #22223b; /* Dark navy blue */
+}
+
+.overview p, .personalized-info p {
+    color: #4a4e69; /* Soft dark gray */
+}
+
+.list-group-item {
+    background-color: #eaeef1; /* Light gray for list items */
+    border: none; /* Remove borders for a cleaner look */
+}
+
+.list-group-item:hover {
+    background-color: #d0d4e0; /* Lightened gray on hover */
+}
+
+.btn-primary {
+    background-color: #4a4e69; /* Match primary button with header */
+    border: none; /* Remove border for a cleaner look */
+}
+
+.btn-outline-info {
+    border-color: #4a4e69; /* Dark gray border */
+    color: #4a4e69; /* Dark gray text */
+}
+
+.btn-outline-info:hover {
+    background-color: #4a4e69; /* Match hover with primary button */
+    color: white; /* White text on hover */
+}
+
+.btn-outline-secondary {
+    border-color: #22223b; /* Dark navy border */
+    color: #22223b; /* Dark navy text */
+}
+
+.btn-outline-secondary:hover {
+    background-color: #22223b; /* Match hover with dark navy */
+    color: white; /* White text on hover */
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+}

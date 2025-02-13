@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Task Details</h2>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">{{ task.title }}</h4>
+        </div>
+        <div class="card-body">
+            <!-- Task Description -->
+            <div class="mb-4">
+                <h5 class="card-title">Description</h5>
+                <p class="card-text">{{ task.description }}</p>
+            </div>
+
+            <!-- Task Details -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5 class="card-title">Device</h5>
+                    <p class="card-text">
+                        {% if task.device %}
+                            {{ task.device.name }}
+                        {% else %}
+                            <span class="text-muted">No device assigned</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="card-title">Assigned To</h5>
+                    <p class="card-text">
+                        {% if task.assigned_user %}
+                            {{ task.assigned_user.username }}
+                        {% else %}
+                            <span class="text-muted">Unassigned</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Priority and Status -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5 class="card-title">Priority</h5>
+                    <p class="card-text">
+                        <span class="badge 
+                            {% if task.priority == 'High' %} bg-danger 
+                            {% elif task.priority == 'Medium' %} bg-warning 
+                            {% else %} bg-success {% endif %}">
+                            {{ task.priority }}
+                        </span>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="card-title">Status</h5>
+                    <p class="card-text">
+                        <span class="badge 
+                            {% if task.status == 'Completed' %} bg-success 
+                            {% elif task.status == 'In Progress' %} bg-info 
+                            {% else %} bg-secondary {% endif %}">
+                            {{ task.status }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Due Date and Created By -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5 class="card-title">Due Date</h5>
+                    <p class="card-text">{{ task.due_date.strftime('%Y-%m-%d') if task.due_date else 'No due date set' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="card-title">Created By</h5>
+                    <p class="card-text">{{ task.creator_user.username }}</p>
+                </div>
+            </div>
+
+            <!-- Created At and Last Updated -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5 class="card-title">Created At</h5>
+                    <p class="card-text">{{ task.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="card-title">Last Updated</h5>
+                    <p class="card-text">{{ task.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                </div>
+            </div>
+
+            <!-- Task Assignment Form (Visible for Admin Only) -->
+            {% if current_user.role == 'admin' and task.assigned_user is none %}
+            <div class="mb-4">
+                <h5 class="card-title">Assign Task</h5>
+                <form action="{{ url_for('main.assign_task_to_user', task_id=task.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label for="assigned_to" class="form-label">Assign to User</label>
+                        <select id="assigned_to" name="assigned_to" class="form-select" required>
+                            <option value="" disabled selected>Select a user</option>
+                            {% for user in available_users %}
+                                <option value="{{ user.id }}">{{ user.username }} ({{ user.role }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check"></i> Assign Task
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+
+            <!-- Task Status Update Form (Visible on Page) -->
+            {% if task.assigned_to == current_user.id %}
+                <form action="{{ url_for('main.update_task_status', task_id=task.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="form-group mb-4">
+                        <label for="status">Update Task Status</label>
+                        <select class="form-select" id="status" name="status" required>
+                            <option value="" disabled selected>-- Choose Status --</option>
+                            <option value="Not Started" {% if task.status == 'Not Started' %}selected{% endif %}>Not Started</option>
+                            <option value="In Progress" {% if task.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                            <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-warning mt-3">Update Status</button>
+                </form>
+            {% endif %}
+        </div>
+
+        <!-- Footer with Navigation -->
+        <div class="card-footer d-flex justify-content-between align-items-center">
+            <a href="{{ url_for('main.view_tasks') }}" class="btn btn-secondary">Back to Tasks</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

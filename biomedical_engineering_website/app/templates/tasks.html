@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Tasks</h2>
+
+    {% if current_user.role == 'admin' %}
+        <div class="d-flex justify-content-between mb-3">
+            <!-- Task Filter Options -->
+            <form method="GET" class="d-flex">
+                <select name="filter_priority" class="form-select me-2">
+                    <option value="" selected>Filter by Priority</option>
+                    <option value="Critical">Critical</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+                <select name="filter_assignee" class="form-select me-2">
+                    <option value="" selected>Filter by Assignee</option>
+                    {% for user in users %}
+                        <option value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+                <select name="filter_status" class="form-select me-2">
+                    <option value="" selected>Filter by Status</option>
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+                <button type="submit" class="btn btn-secondary">Apply Filters</button>
+            </form>
+            <a href="{{ url_for('main.create_task') }}" class="btn btn-primary">Create Task</a>
+        </div>
+    {% endif %}
+
+    {% if current_user.role == 'admin' %}
+        <!-- Unassigned Tasks Section -->
+        <h3>Unassigned Tasks</h3>
+        {% if unassigned_tasks %}
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Title</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in unassigned_tasks %}
+                            <tr>
+                                <td>{{ task.title }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if task.priority == 'High' or task.priority == 'Critical' %} bg-danger 
+                                        {% elif task.priority == 'Medium' %} bg-warning 
+                                        {% else %} bg-success {% endif %}">{{ task.priority }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge 
+                                        {% if task.status == 'Completed' %} bg-success 
+                                        {% elif task.status == 'In Progress' %} bg-info 
+                                        {% else %} bg-secondary {% endif %}">{{ task.status }}</span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('main.task_details', task_id=task.id) }}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No unassigned tasks available.</p>
+        {% endif %}
+    {% endif %}
+
+    <!-- Tasks Categorized by Status -->
+    <h3>Tasks by Status</h3>
+    {% for status, tasks_list in tasks_by_status.items() %}
+        <h4>{{ status }}</h4>
+        {% if tasks_list %}
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Title</th>
+                            <th>Assigned To</th>
+                            <th>Priority</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks_list %}
+                            <tr>
+                                <td>{{ task.title }}</td>
+                                <td>
+                                    {% if task.assigned_user %}
+                                        {{ task.assigned_user.username }}
+                                    {% else %}
+                                        <span class="text-muted">Not Assigned</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge 
+                                        {% if task.priority == 'High' or task.priority == 'Critical' %} bg-danger 
+                                        {% elif task.priority == 'Medium' %} bg-warning 
+                                        {% else %} bg-success {% endif %}">{{ task.priority }}</span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('main.task_details', task_id=task.id) }}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No tasks with status "{{ status }}".</p>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}

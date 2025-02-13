@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">Assign Device</h1>
+
+    <form method="POST" class="shadow-sm p-4 bg-light rounded">
+        <!-- CSRF token -->
+        <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+
+        <div class="form-group mb-3">
+            <label for="device_id" class="form-label">Device</label>
+            <select class="form-control" id="device_id" name="device_id" required>
+                <option value="" disabled selected>Select a Device</option>
+                {% for device in devices %}
+                    <option value="{{ device.id }}">{{ device.name }} ({{ device.serial_number }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label for="assignee_id" class="form-label">Assign To</label>
+            <select class="form-control" id="assignee_id" name="assignee_id" required>
+                <option value="" disabled selected>Select a Technician or Engineer</option>
+                {% for user in technicians_and_engineers %}
+                    <option value="{{ user.id }}">{{ user.username }} ({{ user.role }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Assign Device</button>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mt-4">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}

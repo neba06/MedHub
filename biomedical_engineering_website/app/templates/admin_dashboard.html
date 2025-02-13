@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Admin Dashboard</h1>
+<p>Welcome, {{ current_user.username }}!</p>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm bg-primary text-white">
+            <div class="card-header">
+                <h3>Total Devices</h3>
+            </div>
+            <div class="card-body">
+                <p class="display-4">{{ total_devices }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm bg-danger text-white">
+            <div class="card-header">
+                <h3>Total Incidents</h3>
+            </div>
+            <div class="card-body">
+                <p class="display-4">{{ total_incidents }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm bg-success text-white">
+            <div class="card-header">
+                <h3>Completed Maintenance Tasks</h3>
+            </div>
+            <div class="card-body">
+                <p class="display-4">{{ total_maintenance_tasks }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-2">
+        <div class="card text-center shadow-sm bg-primary text-white">
+            <div class="card-body">
+                <h5>Unassigned Devices</h5>
+                <p class="display-6">{{ unassigned_devices }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center shadow-sm bg-success text-white">
+            <div class="card-body">
+                <h5>Unassigned Tasks</h5>
+                <p class="display-6">{{ unassigned_tasks }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center shadow-sm bg-danger text-white">
+            <div class="card-body">
+                <h5>Unassigned Incidents</h5>
+                <p class="display-6">{{ unassigned_incidents }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center shadow-sm bg-warning text-white">
+            <div class="card-body">
+                <h5>Inactive Devices</h5>
+                <p class="display-6">{{ device_status_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center shadow-sm bg-info text-white">
+            <div class="card-body">
+                <h5>Critical Devices</h5>
+                <p class="display-6">{{ device_health_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center shadow-sm bg-secondary text-white">
+            <div class="card-body">
+                <h5>Low Stocks</h5>
+                <p class="display-6">{{ low_stock_count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <h3>Unassigned Devices</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Device Name</th>
+                <th>Model</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for device in unassigned_device_list %}
+            <tr>
+                <td>{{ device.name }}</td>
+                <td>{{ device.model_number }}</td>
+                <td>{{ device.location }}</td>
+                <td>{{ device.status }}</td>
+                <td><a href="{{ url_for('main.device_details', id=device.id) }}" class="btn btn-sm btn-primary">Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="container mt-4">
+    <h3>Unassigned Tasks</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Due Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in unassigned_task_list %}
+            <tr>
+                <td>{{ task.title }}</td>
+                <td>{{ task.priority }}</td>
+                <td>{{ task.status }}</td>
+                <td>{{ task.due_date.strftime('%Y-%m-%d') }}</td>
+                <td><a href="{{ url_for('main.task_details', task_id=task.id) }}" class="btn btn-sm btn-primary">Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="container mt-4">
+    <h3>Unassigned Incidents</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Device</th>
+                <th>Description</th>
+                <th>Report Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for incident in unassigned_incident_list %}
+            <tr>
+                <td>{{ incident.device.name }}</td>
+                <td>{{ incident.description }}</td>
+                <td>{{ incident.report_date.strftime('%Y-%m-%d') }}</td>
+                <td>{{ incident.resolution_status }}</td>
+                <td><a href="{{ url_for('main.view_incident', incident_id=incident.id) }}" class="btn btn-sm btn-primary">Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="container mt-4">
+    <h3>Critical Devices</h3>
+    <ul class="list-group">
+        {% for device in device_health %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <strong>{{ device.name }}</strong>
+            <span class="badge bg-danger">Critical</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<div class="container mt-4">
+    <!-- Inactive Devices Section -->
+    <h3>Inactive Devices</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Device Name</th>
+                <th>Model</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for device in inactive_devices %}
+            <tr>
+                <td>{{ device.name }}</td>
+                <td>{{ device.model_number }}</td>
+                <td>{{ device.location }}</td>
+                <td>{{ device.status }}</td>
+                <td><a href="{{ url_for('main.device_details', id=device.id) }}" class="btn btn-sm btn-primary">Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="container mt-4">
+    <!-- Low Stocks Section -->
+    <h3>Low Stock Items</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in low_stock_items %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td><a href="{{ url_for('main.view_stock', item_id=item.id) }}" class="btn btn-sm btn-primary">Details</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Incident Reports</h2>
+<a href="{{ url_for('main.create_incident') }}" class="btn btn-primary mb-3">Create New Incident</a>
+{% if current_user.role == 'user' %}
+    <!-- Incidents Reported by the User -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>My Reported Incidents</h3>
+        </div>
+        <div class="card-body">
+            {% if reported_incidents %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Device</th>
+                                <th>Report Date</th>
+                                <th>Description</th>
+                                <th>Resolution Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for incident in reported_incidents %}
+                                <tr>
+                                    <td>{{ incident.device.name }}</td>
+                                    <td>{{ incident.report_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                    <td>{{ incident.description[:50] }}...</td>
+                                    <td>{{ incident.resolution_status }}</td>
+                                    <td>
+                                        <a href="{{ url_for('main.view_incident', incident_id=incident.id) }}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                    You have not reported any incidents.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% else %}
+
+
+<div class="container">
+    {% if current_user.role == 'admin' %}
+        <!-- Unassigned Incidents Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Unassigned Incidents</h3>
+            </div>
+            <div class="card-body">
+                {% if unassigned_incidents %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Device</th>
+                                    <th>Report Date</th>
+                                    <th>Description</th>
+                                    <th>Resolution Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for incident in unassigned_incidents %}
+                                    <tr>
+                                        <td>{{ incident.device.name }}</td>
+                                        <td>{{ incident.report_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                        <td>{{ incident.description[:50] }}...</td>
+                                        <td>{{ incident.resolution_status }}</td>
+                                        <td>
+                                            <a href="{{ url_for('main.view_incident', incident_id=incident.id) }}" class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info" role="alert">
+                        No unassigned incidents.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Open Incidents Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Open Incidents</h3>
+        </div>
+        <div class="card-body">
+            {% if open_incidents %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Device</th>
+                                <th>Report Date</th>
+                                <th>Description</th>
+                                <th>Assigned To</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for incident in open_incidents %}
+                                <tr>
+                                    <td>{{ incident.device.name }}</td>
+                                    <td>{{ incident.report_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                    <td>{{ incident.description[:50] }}...</td>
+                                    <td>
+                                        {% if incident.assigned_to %}
+                                            {{ incident.assigned_user.username }}
+                                        {% else %}
+                                            <span class="text-muted">Not Assigned</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('main.view_incident', incident_id=incident.id) }}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                    No open incidents.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Resolved Incidents Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Resolved Incidents</h3>
+        </div>
+        <div class="card-body">
+            {% if resolved_incidents %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Device</th>
+                                <th>Report Date</th>
+                                <th>Description</th>
+                                <th>Assigned To</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for incident in resolved_incidents %}
+                                <tr>
+                                    <td>{{ incident.device.name }}</td>
+                                    <td>{{ incident.report_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                    <td>{{ incident.description[:50] }}...</td>
+                                    <td>
+                                        {% if incident.assigned_to %}
+                                            {{ incident.assigned_user.username }}
+                                        {% else %}
+                                            <span class="text-muted">Not Assigned</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('main.view_incident', incident_id=incident.id) }}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                    No resolved incidents.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if current_user.role == 'engineer' %}
+        <!-- Incidents Assigned to the Engineer Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Incidents Assigned to Me</h3>
+            </div>
+            <div class="card-body">
+                {% if assigned_incidents %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Device</th>
+                                    <th>Report Date</th>
+                                    <th>Description</th>
+                                    <th>Resolution Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for incident in assigned_incidents %}
+                                    <tr>
+                                        <td>{{ incident.device.name }}</td>
+                                        <td>{{ incident.report_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                        <td>{{ incident.description[:50] }}...</td>
+                                        <td>{{ incident.resolution_status }}</td>
+                                        <td>
+                                            <a href="{{ url_for('main.view_incident', incident_id=incident.id) }}" class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info" role="alert">
+                        No incidents assigned to you.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Incidents Reported by the Engineer Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Incidents Reported by Me</h3>
+            </div>
+            <div class="card-body">
+                {% if reported_incidents %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Device</th>
+                                    <th>Report Date</th>
+                                    <th>Description</th>
+                                    <th>Resolution Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for incident in reported_incidents %}
+                                    <tr>
+                                        <td>{{ incident.device.name }}</td>
+                                        <td>{{ incident.report_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                        <td>{{ incident.description[:50] }}...</td>
+                                        <td>{{ incident.resolution_status }}</td>
+                                        <td>
+                                            <a href="{{ url_for('main.view_incident', incident_id=incident.id) }}" class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info" role="alert">
+                        No incidents reported by you.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

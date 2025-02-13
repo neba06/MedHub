@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Create Task</h2>
+    
+    <form method="POST" class="card p-4 shadow-sm">
+        {{ form.hidden_tag() }}
+
+        <!-- Task Title -->
+        <div class="mb-3">
+            <label for="title" class="form-label">{{ form.title.label }}</label>
+            {{ form.title(class="form-control", placeholder="Enter task title", size=50) }}
+        </div>
+
+        <!-- Task Description -->
+        <div class="mb-3">
+            <label for="description" class="form-label">{{ form.description.label }}</label>
+            {{ form.description(class="form-control", placeholder="Enter task description", rows=4) }}
+        </div>
+
+        <!-- Device Selection -->
+        <div class="mb-3">
+            <label for="device_id" class="form-label">{{ form.device_id.label }}</label>
+            {{ form.device_id(class="form-select") }}
+        </div>
+
+        <!-- Assigned To -->
+        <div class="mb-3">
+            <label for="assigned_to" class="form-label">{{ form.assigned_to.label }}</label>
+            {{ form.assigned_to(class="form-select") }}
+        </div>
+
+        <!-- Priority Selection -->
+        <div class="mb-3">
+            <label for="priority" class="form-label">{{ form.priority.label }}</label>
+            {{ form.priority(class="form-select") }}
+        </div>
+
+        <!-- Due Date -->
+        <div class="mb-3">
+            <label for="due_date" class="form-label">{{ form.due_date.label }}</label>
+            {{ form.due_date(class="form-control") }}
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-flex justify-content-center">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

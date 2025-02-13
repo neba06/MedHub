@@ -1,0 +1,69 @@
+/* General Styles */
+body {
+    background-color: #f9f9f9;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Device Cards Styling */
+.card {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #555;
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+}
+
+/* Calendar Styling */
+#calendar {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.fc-toolbar {
+    margin-bottom: 20px;
+}
+
+/* Button Styling */
+.btn-sm {
+    font-size: 0.875rem;
+    padding: 5px 10px;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+/* Device Maintenance Section */
+h2 {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}

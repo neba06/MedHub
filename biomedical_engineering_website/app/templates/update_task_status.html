@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Update Task Status for Task: {{ task.title }}</h2>
+
+    {% if task.assigned_to == current_user.id %}
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.status.label }}<br>
+                {{ form.status(class="form-control") }}
+            </div>
+
+            {% if form.status.data == 'Completed' %}
+                <div class="form-group">
+                    <label for="completion_details">Completion Details</label>
+                    <textarea id="completion_details" name="completion_details" class="form-control" rows="3" placeholder="Enter completion details"></textarea>
+                </div>
+            {% endif %}
+
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    {% else %}
+        <p>You do not have permission to update this task status.</p>
+    {% endif %}
+{% endblock %}

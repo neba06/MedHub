@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="text-dark">Stock Management</h1>
+        <a href="{{ url_for('main.add_stock') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add New Item
+        </a>
+    </div>
+
+    <!-- Low Stock Alert -->
+    <div class="alert alert-warning mt-3" role="alert" {% if low_stock_items|length == 0 %}style="display: none;"{% endif %}>
+        <strong>Low Stock Alert:</strong> The following items need replenishment:
+        <ul>
+            {% for item in low_stock_items %}
+            <li>
+                {{ item.name }} (Quantity: {{ item.quantity }})
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Stock List -->
+    <h3 class="mt-4">Inventory</h3>
+    {% if stock_items|length > 0 %}
+    <table class="table table-bordered table-hover mt-3 shadow-sm">
+        <thead class="thead-light">
+            <tr>
+                <th>#</th>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in stock_items %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ item.name }}</td>
+                <td {% if item.quantity < 10 %}class="text-danger"{% endif %}>
+                    {{ item.quantity }} {% if item.quantity < 10 %}(Low Stock){% endif %}
+                </td>
+                <td>{{ item.description }}</td>
+                <td>
+                    <a href="{{ url_for('main.edit_stock', id=item.id) }}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <form action="{{ url_for('main.delete_stock', id=item.id) }}" method="POST" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted mt-4">No stock items available. Click "Add New Item" to start managing inventory.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Incident Report Details</h2>
+    
+    <p><strong>Device:</strong> {{ incident.device.name }}</p>
+    <p><strong>Report Date:</strong> {{ incident.report_date.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+    <p><strong>Description:</strong> {{ incident.description }}</p>
+    <p><strong>Resolution Status:</strong> {{ incident.resolution_status }}</p>
+    
+    {% if incident.assigned_user %}
+        <p><strong>Assigned User:</strong> {{ incident.assigned_user.username }}</p>
+    {% else %}
+        <p><strong>Assigned User:</strong> Not assigned yet</p>
+    {% endif %}
+
+    {% if current_user.role == 'admin' %}
+        <!-- Admin can assign an engineer/technician to the incident -->
+        <form method="POST" action="{{ url_for('main.assign_incident', incident_id=incident.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label for="assigned_to">Assign User:</label>
+                <select name="assigned_to" id="assigned_to" class="form-control">
+                    <option value="">Select a user...</option>
+                    {% for user in users %}
+                        <option value="{{ user.id }}" {% if user.id == incident.assigned_to %} selected {% endif %}>
+                            {{ user.username }} ({{ user.role }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Assign Incident</button>
+        </form>
+    {% endif %}
+
+    {% if current_user.id == incident.assigned_to %}
+        <!-- Only assigned user or admin can update the resolution status -->
+        <form method="POST" action="{{ url_for('main.update_incident', incident_id=incident.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label for="resolution_status">Resolution Status:</label>
+                <select name="resolution_status" id="resolution_status" class="form-control">
+                    <option value="Open" {% if incident.resolution_status == 'Open' %} selected {% endif %}>Open</option>
+                    <option value="In Progress" {% if incident.resolution_status == 'In Progress' %} selected {% endif %}>In Progress</option>
+                    <option value="Resolved" {% if incident.resolution_status == 'Resolved' %} selected {% endif %}>Resolved</option>
+                    <option value="Closed" {% if incident.resolution_status == 'Closed' %} selected {% endif %}>Closed</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Update Status</button>
+        </form>
+    {% endif %}
+    
+    <a href="{{ url_for('main.view_incidents') }}" class="btn btn-secondary">Back to Incidents</a>
+{% endblock %}

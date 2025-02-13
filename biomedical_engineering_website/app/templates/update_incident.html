@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Update Incident: {{ incident.device.name }}</h2>
+
+<form method="POST">
+    <div class="form-group">
+        <label for="resolution_status">Resolution Status:</label>
+        <select name="resolution_status" class="form-control">
+            <option value="Open" {% if incident.resolution_status == 'Open' %}selected{% endif %}>Open</option>
+            <option value="In Progress" {% if incident.resolution_status == 'In Progress' %}selected{% endif %}>In Progress</option>
+            <option value="Resolved" {% if incident.resolution_status == 'Resolved' %}selected{% endif %}>Resolved</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">Update Status</button>
+</form>
+
+<a href="{{ url_for('main.view_incident', incident_id=incident.id) }}" class="btn btn-secondary">Back to Incident</a>
+{% endblock %}
