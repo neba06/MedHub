@@ -1,4 +1,4 @@
-****MedHub – Medical Devices Management System****
+# MedHub – Medical Devices Management System
 
 MedHub is a comprehensive web-based application designed to streamline the management of medical devices within healthcare facilities. It allows administrators to assign devices to technicians and engineers, track device status and health, and log activities, all while ensuring secure access and real-time notifications.
 
